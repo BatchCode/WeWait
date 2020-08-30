@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Pomelo.EntityFrameworkCore.MySql.Storage;
+using WeWaitApi.Models;
 
 namespace WeWaitApi
 {
@@ -28,8 +29,8 @@ namespace WeWaitApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<Models.AMCDbContext>(options => options
-                .UseMySql("Server=localhost; Database=wewait;User=root;Password=wewait;",
+            services.AddDbContext<AMCDbContext>(options => options
+                .UseMySql(Configuration.GetConnectionString("Default"),
                     mysqlOptions =>
                         mysqlOptions.ServerVersion(new ServerVersion(new Version(10, 4, 6), ServerType.MariaDb))));
             services.AddControllers();

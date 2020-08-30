@@ -10,21 +10,21 @@
   },
   "profiles": {
     "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "launchUrl": "api/Users",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+        "commandName": "IISExpress",
+        "launchBrowser": true,
+        "launchUrl": "api/Roles",
+        "environmentVariables": {
+            "ASPNETCORE_ENVIRONMENT": "Development"
+        }
     },
     "WeWaitApi": {
-      "commandName": "Project",
-      "launchBrowser": true,
-      "launchUrl": "weatherforecast",
-      "applicationUrl": "https://localhost:5001;http://localhost:5000",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+        "commandName": "Project",
+        "launchBrowser": true,
+        "launchUrl": "api/Roles",
+        "applicationUrl": "https://localhost:5001;http://localhost:5000",
+        "environmentVariables": {
+            "ASPNETCORE_ENVIRONMENT": "Development"
+        }
     }
   }
 }
