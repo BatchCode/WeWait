@@ -7,7 +7,7 @@ namespace WeWaitApi.Models
     {
         public int EventId { get; set; }
         public int BookingId { get; set; }
-        public int Quantity { get; set; }
+        public int? Quantity { get; set; }
 
         public virtual Booking Booking { get; set; }
         public virtual Event Event { get; set; }
