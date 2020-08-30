@@ -12,12 +12,13 @@ namespace WeWaitApi.Models
         }
 
         public int Id { get; set; }
-        public DateTime Time { get; set; }
-        public int UserId { get; set; }
-        public int WeWaiterId { get; set; }
-        public int ConfirmBookingId { get; set; }
+        public DateTime? Time { get; set; }
+        public DateTime? TimeCancel { get; set; }
+        public string Code { get; set; }
+        public sbyte? Confirm { get; set; }
+        public int? UserId { get; set; }
+        public int? WeWaiterId { get; set; }
 
-        public virtual Confirmbooking ConfirmBooking { get; set; }
         public virtual User User { get; set; }
         public virtual User WeWaiter { get; set; }
         public virtual ICollection<Eventbooking> Eventbooking { get; set; }

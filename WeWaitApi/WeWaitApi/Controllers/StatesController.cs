@@ -70,7 +70,7 @@ namespace WeWaitApi.Controllers
                 }
             }
 
-            return Ok("Ressource mise à jour");
+            return NoContent();
         }
 
         // POST: api/States

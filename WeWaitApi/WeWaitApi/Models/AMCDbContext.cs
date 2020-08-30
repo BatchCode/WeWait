@@ -16,7 +16,6 @@ namespace WeWaitApi.Models
         }
 
         public virtual DbSet<Booking> Booking { get; set; }
-        public virtual DbSet<Confirmbooking> Confirmbooking { get; set; }
         public virtual DbSet<Event> Event { get; set; }
         public virtual DbSet<Eventbooking> Eventbooking { get; set; }
         public virtual DbSet<Location> Location { get; set; }
@@ -40,9 +39,6 @@ namespace WeWaitApi.Models
             {
                 entity.ToTable("booking");
 
-                entity.HasIndex(e => e.ConfirmBookingId)
-                    .HasName("fk_Booking_ConfirmBooking1_idx");
-
                 entity.HasIndex(e => e.UserId)
                     .HasName("fk_Booking_User1_idx");
 
@@ -53,11 +49,16 @@ namespace WeWaitApi.Models
                     .HasColumnName("id")
                     .HasColumnType("int(11)");
 
-                entity.Property(e => e.ConfirmBookingId)
-                    .HasColumnName("ConfirmBooking_id")
-                    .HasColumnType("int(11)");
+                entity.Property(e => e.Code)
+                    .HasColumnType("varchar(45)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
+
+                entity.Property(e => e.Confirm).HasColumnType("tinyint(4)");
 
                 entity.Property(e => e.Time).HasColumnType("datetime");
+
+                entity.Property(e => e.TimeCancel).HasColumnType("datetime");
 
                 entity.Property(e => e.UserId)
                     .HasColumnName("User_id")
@@ -67,40 +68,15 @@ namespace WeWaitApi.Models
                     .HasColumnName("WeWaiter_id")
                     .HasColumnType("int(11)");
 
-                entity.HasOne(d => d.ConfirmBooking)
-                    .WithMany(p => p.Booking)
-                    .HasForeignKey(d => d.ConfirmBookingId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_Booking_ConfirmBooking1");
-
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.BookingUser)
                     .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_Booking_User1");
 
                 entity.HasOne(d => d.WeWaiter)
                     .WithMany(p => p.BookingWeWaiter)
                     .HasForeignKey(d => d.WeWaiterId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_Booking_User2");
-            });
-
-            modelBuilder.Entity<Confirmbooking>(entity =>
-            {
-                entity.ToTable("confirmbooking");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasColumnType("int(11)");
-
-                entity.Property(e => e.BookingCode)
-                    .IsRequired()
-                    .HasColumnType("varchar(45)")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
-
-                entity.Property(e => e.Confirm).HasColumnType("tinyint(4)");
             });
 
             modelBuilder.Entity<Event>(entity =>
@@ -115,19 +91,16 @@ namespace WeWaitApi.Models
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.Actor)
-                    .IsRequired()
                     .HasColumnType("varchar(45)")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
 
                 entity.Property(e => e.Category)
-                    .IsRequired()
                     .HasColumnType("varchar(45)")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
 
                 entity.Property(e => e.DateEnd)
-                    .IsRequired()
                     .HasColumnType("varchar(45)")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
@@ -139,7 +112,6 @@ namespace WeWaitApi.Models
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.Name)
-                    .IsRequired()
                     .HasColumnType("varchar(45)")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
@@ -151,7 +123,6 @@ namespace WeWaitApi.Models
                 entity.HasOne(d => d.Location)
                     .WithMany(p => p.Event)
                     .HasForeignKey(d => d.LocationId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_Event_Location1");
             });
 
@@ -200,7 +171,6 @@ namespace WeWaitApi.Models
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.Adress1)
-                    .IsRequired()
                     .HasColumnType("varchar(45)")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
@@ -211,13 +181,11 @@ namespace WeWaitApi.Models
                     .HasCollation("utf8_general_ci");
 
                 entity.Property(e => e.City)
-                    .IsRequired()
                     .HasColumnType("varchar(45)")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
 
                 entity.Property(e => e.Country)
-                    .IsRequired()
                     .HasColumnType("varchar(45)")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
@@ -228,7 +196,6 @@ namespace WeWaitApi.Models
                     .HasCollation("utf8_general_ci");
 
                 entity.Property(e => e.PostalCode)
-                    .IsRequired()
                     .HasColumnType("varchar(45)")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
@@ -247,7 +214,6 @@ namespace WeWaitApi.Models
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.Label)
-                    .IsRequired()
                     .HasColumnType("varchar(45)")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
@@ -296,7 +262,6 @@ namespace WeWaitApi.Models
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.Description)
-                    .IsRequired()
                     .HasColumnType("varchar(255)")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
@@ -324,19 +289,16 @@ namespace WeWaitApi.Models
                     .HasCollation("utf8_general_ci");
 
                 entity.Property(e => e.Email)
-                    .IsRequired()
                     .HasColumnType("varchar(80)")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
 
                 entity.Property(e => e.FirstName)
-                    .IsRequired()
                     .HasColumnType("varchar(45)")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
 
                 entity.Property(e => e.LastName)
-                    .IsRequired()
                     .HasColumnType("varchar(45)")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
@@ -346,7 +308,6 @@ namespace WeWaitApi.Models
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.Password)
-                    .IsRequired()
                     .HasColumnType("varchar(255)")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
@@ -358,13 +319,11 @@ namespace WeWaitApi.Models
                 entity.HasOne(d => d.Location)
                     .WithMany(p => p.User)
                     .HasForeignKey(d => d.LocationId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_User_Location1");
 
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.User)
                     .HasForeignKey(d => d.RoleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_User_Role1");
             });
 
