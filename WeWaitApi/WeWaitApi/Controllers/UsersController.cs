@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
+using MySql.Data.MySqlClient;
 using WeWaitApi.Models;
 
 namespace WeWaitApi.Controllers
@@ -20,9 +25,41 @@ namespace WeWaitApi.Controllers
             _context = context;
         }
 
+        // GET: api/Users/GetByEmail (body parameter : email)
+        [HttpGet("GetByEmail")]
+        public async Task<ActionResult<User>> GetUserByEmail([FromBody] User user)
+        {
+            /* How to perform Raw SQL query */
+            // Build the query
+            var email = user.Email;
+            string query = $"SELECT * FROM USER WHERE Email = @email";
+            var p1 = new MySqlParameter("@email", email);
+            
+            // Execute
+            var usr = await _context.User.FromSqlRaw(query, p1).AsNoTracking().FirstOrDefaultAsync();
+
+            /* Or using the fashion way */
+            //  var usr = await _context.User.FirstOrDefaultAsync(u => ((u.Email == user.Email) && (u.Password == user.Password)));
+
+            if (usr == null)
+            {
+                return NotFound();
+            }
+
+            return usr;
+        }
+
+        // GET: api/GetAllByRole/1
+        [HttpGet("GetAllByRole/{id}")]
+        public async Task<ActionResult<List<User>>> GetAllUsersByRole(int id)
+        {
+            return await _context.User.Where(u => u.RoleId == id).ToListAsync();
+        }
+
         // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUser()
+        // public async Task<ActionResult<IEnumerable<User>>> GetUser([FromQuery] string email)
         {
             return await _context.User.ToListAsync();
         }
@@ -79,6 +116,14 @@ namespace WeWaitApi.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
+            var usr = await _context.User.FirstOrDefaultAsync(u => u.Email == user.Email);
+
+            // Check if user already exists
+            if (usr != null) {
+                // return Deny("User already exists");
+                return StatusCode(409);
+            }
+
             _context.User.Add(user);
             await _context.SaveChangesAsync();
 
