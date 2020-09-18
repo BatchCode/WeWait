@@ -27,11 +27,11 @@ namespace WeWaitApi.Controllers
             return await _context.Role.ToListAsync();
         }
 
-        // GET: api/Roles/5
+        // GET: api/Roles/Id
         [HttpGet("{id}")]
-        public async Task<ActionResult<Role>> GetRole(int id)
+        public async Task<ActionResult<Role>> GetRoleId(int id)
         {
-            var role = await _context.Role.FindAsync(id);
+            var role = await _context.Role.FirstAsync(u => u.Id == id);
 
             if (role == null)
             {
@@ -41,7 +41,22 @@ namespace WeWaitApi.Controllers
             return role;
         }
 
-        // PUT: api/Roles/5
+        // GET: api/GetRoleByLabel/label
+        [HttpGet("GetRoleByLabel/{label}")]
+        public async Task<ActionResult<Role>> GetRoleLabel(string Label)
+        {
+            var roleLabel = await _context.Role.FirstOrDefaultAsync(u => u.Label == Label);
+
+            if (roleLabel == null)
+            {
+                return NotFound();
+            }
+
+            return roleLabel;
+        }
+
+
+        // PUT: api/Roles/id
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
@@ -79,13 +94,22 @@ namespace WeWaitApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Role>> PostRole(Role role)
         {
+            //Check en Bdd Role Existant
+            var ro = await _context.Role.FirstOrDefaultAsync(r => r.Label == role.Label);
+            
+            //Check Role Inexistant
+            if (ro != null)
+            {
+                return StatusCode(409);
+            }
+
             _context.Role.Add(role);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetRole", new { id = role.Id }, role);
         }
 
-        // DELETE: api/Roles/5
+        // DELETE: api/Roles/id
         [HttpDelete("{id}")]
         public async Task<ActionResult<Role>> DeleteRole(int id)
         {

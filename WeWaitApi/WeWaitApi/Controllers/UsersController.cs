@@ -29,9 +29,23 @@ namespace WeWaitApi.Controllers
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<User>> GetUser([FromRoute]int id)
         {
             var user = await _context.User.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return user;
+        }
+
+        // GET: api/UserByEmail/email
+        [HttpGet("{email}")]
+        public async Task<ActionResult<User>> GetUser(string email)
+        {
+            var user = await _context.User.FirstAsync(u => u.Email == email);
 
             if (user == null)
             {
