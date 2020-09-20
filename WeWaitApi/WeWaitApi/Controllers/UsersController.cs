@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
@@ -9,6 +10,7 @@ using WeWaitApi.Models;
 
 namespace WeWaitApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -56,6 +58,9 @@ namespace WeWaitApi.Controllers
         public async Task<ActionResult<IEnumerable<User>>> GetUser()
         // public async Task<ActionResult<IEnumerable<User>>> GetUser([FromQuery] string email)
         {
+            int roleId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "RoleId").Value);
+            if (roleId == 2) { return NotFound(new { Message = "You are not the admin bitch!" }); }
+
             return await _context.User.ToListAsync();
         }
 
