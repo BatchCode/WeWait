@@ -30,13 +30,8 @@ namespace WeWaitApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<State>> GetState(int id)
         {
-            var state = await _context.State.FindAsync(id);
-
-            if (state == null)
-            {
-                return NotFound();
-            }
-
+            var state = await _context.State.FindAsync(id).ConfigureAwait(false);
+ 
             return state;
         }
 

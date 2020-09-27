@@ -20,7 +20,10 @@ namespace WeWaitApi.Controllers
             _context = context;
         }
 
-        // GET: api/Bookings
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Booking>>> GetBooking()
         {
