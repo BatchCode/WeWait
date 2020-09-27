@@ -60,6 +60,8 @@ namespace WeWaitApi.Controllers
             ActionResult response = Unauthorized();
 
             var usr = await _context.User.FirstOrDefaultAsync(u => (u.Email == user.Email) && (u.Password == user.Password));
+            // var usr = await _context.User.Where(u => u.Email == user.Email).ToListAsync();
+            // var usr = await _context.User.Where(u => u.Email == user.Email).FirstOrDefaultAsync()
 
             if (usr == null)
             {
