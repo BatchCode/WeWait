@@ -10,7 +10,7 @@ using WeWaitApi.Models;
 
 namespace WeWaitApi.Controllers
 {
-    [Authorize]
+    /*[Authorize]*/
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -56,10 +56,9 @@ namespace WeWaitApi.Controllers
         // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUser()
-        // public async Task<ActionResult<IEnumerable<User>>> GetUser([FromQuery] string email)
         {
-            int roleId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "RoleId").Value);
-            if (roleId == 2) { return NotFound(new { Message = "You are not the admin bitch!" }); }
+            // int roleId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "RoleId").Value);
+            // if (roleId == 2) { return NotFound(new { Message = "You are not the admin!" }); }
 
             return await _context.User.ToListAsync();
         }

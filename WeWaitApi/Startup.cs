@@ -48,16 +48,16 @@ namespace WeWaitApi
                 options.AddDefaultPolicy(
                     builder =>
                     {
-                        // builder.WithOrigins("*")
                         builder
                         .AllowAnyOrigin()
-                        .AllowAnyHeader()
                         .AllowAnyHeader();
                     });
             });
 
             // services.AddCors(cors);
             services.AddControllers();
+
+            services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -69,6 +69,8 @@ namespace WeWaitApi
             }
 
             app.UseCors();
+
+            app.UseSwagger();
 
             app.UseHttpsRedirection();
 
