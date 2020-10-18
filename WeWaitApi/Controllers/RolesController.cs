@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WeWaitApi.Models;
 
 namespace WeWaitApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class RolesController : ControllerBase
@@ -28,8 +29,8 @@ namespace WeWaitApi.Controllers
         }
 
         // GET: api/Roles/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Role>> GetRole(int id)
+        [HttpGet("GetRoleById/{id}")]
+        public async Task<ActionResult<Role>> GetRoleById(int id)
         {
             var role = await _context.Role.FindAsync(id);
 
@@ -41,12 +42,27 @@ namespace WeWaitApi.Controllers
             return role;
         }
 
+        //GET: api/Role/Admin
+        [HttpGet("GetRoleByLabel/{label}")]
+        public async Task<ActionResult<Role>> GetRoleByLabel(int Label)
+        {
+            var role = await _context.Role.FindAsync(Label);
+            
+            if (role == null)
+            {
+                return NotFound();
+            }
+            return role;
+        }
+
         // PUT: api/Roles/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRole(int id, Role role)
         {
+            ActionResult response = Unauthorized();
+
             if (id != role.Id)
             {
                 return BadRequest();
@@ -69,16 +85,23 @@ namespace WeWaitApi.Controllers
                     throw;
                 }
             }
-
-            return NoContent();
+            response = Ok(new { Message = "Sucess update" });
+            return response;
         }
 
-        // POST: api/Roles
+        // POST: api/Roles/PostRoles
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost]
+        [HttpPost("PostRoles")]
         public async Task<ActionResult<Role>> PostRole(Role role)
         {
+            var Rol = await _context.Role.FirstOrDefaultAsync(r => r.Label == role.Label);
+
+            if(Rol != null)
+            {
+                return StatusCode(409);
+            }
+
             _context.Role.Add(role);
             await _context.SaveChangesAsync();
 
@@ -89,6 +112,8 @@ namespace WeWaitApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Role>> DeleteRole(int id)
         {
+            ActionResult response = Unauthorized();
+
             var role = await _context.Role.FindAsync(id);
             if (role == null)
             {
@@ -98,7 +123,8 @@ namespace WeWaitApi.Controllers
             _context.Role.Remove(role);
             await _context.SaveChangesAsync();
 
-            return role;
+            response = Ok(new { Message = "Role DELETE :", role });
+            return response;
         }
 
         private bool RoleExists(int id)
